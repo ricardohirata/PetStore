@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.is;
 
 public class PetStore {
     String uri = "https://petstore.swagger.io/v2/pet";
+    String idPet = "1001";
 
     public String lerJson(String caminhoJson) throws IOException {
         return new String(Files.readAllBytes(Paths.get(caminhoJson)));
@@ -38,7 +39,7 @@ public class PetStore {
 
     @Test
     public void consultarPet(){
-        String idPet = "1001";
+
         String token =
         given()
                 .contentType("application/json")
@@ -57,4 +58,36 @@ public class PetStore {
         System.out.printf("O token e %s.",token);
     }
 
+    @Test
+    public void alterarPet() throws IOException {
+        String jsonBody = lerJson("src/test/resources/db/pet2.json");
+
+        given()
+                .contentType("application/json")
+                .log().all()
+                .body(jsonBody)
+        .when()
+                .put(uri)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("name", is("Toto"))
+                .body("status", is("sold"))
+        ;
+    }
+
+    @Test
+    public void excluirPet(){
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .delete(uri + "/" + idPet)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("code", is(200))
+                .body("message", is(idPet))
+        ;
+    }
 }
