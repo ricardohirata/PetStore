@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
 
 
 public class PetStore {
@@ -27,6 +28,8 @@ public class PetStore {
         .then()
                 .log().all()
                 .statusCode(200)
+                .body("name", is("Toto"))
+                .body("status", is("available"))
         ;
     }
 
