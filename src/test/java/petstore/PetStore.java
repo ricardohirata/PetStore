@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 
@@ -30,7 +31,30 @@ public class PetStore {
                 .statusCode(200)
                 .body("name", is("Toto"))
                 .body("status", is("available"))
+                .body("category.name", is("dog"))
+                .body("tags.name", contains("Animal")) //lista
         ;
+    }
+
+    @Test
+    public void consultarPet(){
+        String idPet = "1001";
+        String token =
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .get(uri + "/" + idPet)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("name", is("Toto"))
+                .body("category.name", is("dog"))
+                .body("tags.name", contains("Animal"))
+        .extract()
+                .path("category.name")
+        ;
+        System.out.printf("O token e %s.",token);
     }
 
 }
